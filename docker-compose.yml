@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+  # 1° service to run server application
+  web:
+    build:
+      # search file inside this folder 
+      context: .
+      # specify docker file name
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3000:3000"
+    volumes:
+      # do not try to map a folder up against /app/node_modules inside the containers
+      - /app/node_modules
+      - .:/app
+    stdin_open: true
+
+  # 2° service to host only tests
+  tests:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - /app/node_modules
+      - .:/app
+    # Overrinde default command of the dockerfile
+    command: ["npm", "run", "test"]
